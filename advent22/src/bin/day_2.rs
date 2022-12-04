@@ -25,7 +25,6 @@ fn calculate_points(my_hand: &Hand, opponent_hand: &Hand) -> i32 {
         Hand::Rock => 1,
         Hand::Paper => 2,
         Hand::Scissors => 3,
-        _ => panic!("bad hand"),
     };
 
     let outcome_points: i32 = match my_hand {
@@ -33,19 +32,16 @@ fn calculate_points(my_hand: &Hand, opponent_hand: &Hand) -> i32 {
             Hand::Scissors => 6,
             Hand::Rock => 3,
             Hand::Paper => 0,
-            _ => panic!("bad opponent hand"),
         },
         Hand::Paper => match opponent_hand {
             Hand::Rock => 6,
             Hand::Paper => 3,
             Hand::Scissors => 0,
-            _ => panic!("bad opponent hand"),
         },
         _ => match opponent_hand {
             Hand::Paper => 6,
             Hand::Scissors => 3,
             Hand::Rock => 0,
-            _ => panic!("bad opponent hand"),
         },
     };
 
@@ -58,19 +54,16 @@ fn decode_corrected_hand(code: &str, opponent_hand: &Hand) -> Hand {
             Hand::Rock => return Hand::Scissors,
             Hand::Paper => return Hand::Rock,
             Hand::Scissors => return Hand::Paper,
-            _ => panic!("bad opponent hand."),
         },
         "Y" => match opponent_hand {
             Hand::Rock => return Hand::Rock,
             Hand::Paper => return Hand::Paper,
             Hand::Scissors => return Hand::Scissors,
-            _ => panic!("bad opponent hand."),
         },
         "Z" => match opponent_hand {
             Hand::Rock => return Hand::Paper,
             Hand::Paper => return Hand::Scissors,
             Hand::Scissors => return Hand::Rock,
-            _ => panic!("bad opponent hand."),
         },
         _ => panic!("This is invalid"),
     };
