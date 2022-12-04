@@ -26,9 +26,7 @@ fn get_ranges(line: &str) -> (i32, i32, i32, i32) {
     return (first_range.0, first_range.1, second_range.0, second_range.1);
 }
 
-fn check_contains(line: &str) -> bool {
-    let ranges = get_ranges(line);
-
+fn check_contains(ranges: (i32, i32, i32, i32)) -> bool {
     if ranges.0 <= ranges.2 && ranges.1 >= ranges.3 {
         return true;
     }
@@ -38,8 +36,25 @@ fn check_contains(line: &str) -> bool {
     return false;
 }
 
+fn check_overlaps(ranges: (i32, i32, i32, i32)) -> bool {
+    if ranges.2 >= ranges.0 && ranges.2 <= ranges.1 {
+        return true;
+    }
+    if ranges.3 >= ranges.0 && ranges.3 <= ranges.1 {
+        return true;
+    }
+    if ranges.0 >= ranges.2 && ranges.0 <= ranges.3 {
+        return true;
+    }
+    if ranges.1 >= ranges.2 && ranges.1 <= ranges.3 {
+        return true;
+    }
+    return false;
+}
+
 fn main() {
     let mut fully_contained_counter = 0;
+    let mut overlap_counter = 0;
 
     let file_contents: String = get_input_contents();
 
@@ -47,10 +62,15 @@ fn main() {
         if line.len() == 0 {
             continue;
         }
-        if check_contains(line) {
+        let ranges = get_ranges(line);
+        if check_contains(ranges) {
             fully_contained_counter += 1;
+        }
+        if check_overlaps(ranges) {
+            overlap_counter += 1;
         }
     }
 
     println!("Fully contained pairs: {}", fully_contained_counter);
+    println!("Overlapping pairs: {}", overlap_counter);
 }
