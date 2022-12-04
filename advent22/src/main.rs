@@ -1,6 +1,8 @@
 use clap::Parser;
 
-#[derive(Parser, Debug)]
+mod io_handling;
+
+#[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long)]
@@ -8,6 +10,9 @@ struct Args {
 
     #[arg(short, long)]
     input_file: String,
+
+    #[arg[short, long, default_value_t = false]]
+    test_file: bool,
 }
 
 fn main() {
@@ -17,4 +22,9 @@ fn main() {
         "Running advent22 - day {} on input {}",
         args.day, args.input_file
     );
+
+    if args.test_file {
+        let file_contents: String = io_handling::read_file_contents(args.input_file);
+        println!("{}", file_contents)
+    }
 }
