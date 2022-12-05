@@ -30,7 +30,7 @@ fn parse_initial_state(lines: &String) -> Vec<Vec<char>> {
     return initial_state;
 }
 
-fn parse_moves(state: &mut Vec<Vec<char>>, input: &String) {
+fn parse_moves_as_9000(state: &mut Vec<Vec<char>>, input: &String) {
     for line in input.split("\n") {
         if !line.starts_with("move") {
             continue;
@@ -53,6 +53,34 @@ fn parse_moves(state: &mut Vec<Vec<char>>, input: &String) {
     }
 }
 
+fn parse_moves_as_9001(state: &mut Vec<Vec<char>>, input: &String) {
+    for line in input.split("\n") {
+        if !line.starts_with("move") {
+            continue;
+        }
+
+        let tokens: Vec<&str> = line.split_whitespace().collect();
+        let qnt = tokens[1].parse::<usize>().expect("qnt should be numeric");
+        let source = tokens[3]
+            .parse::<usize>()
+            .expect("source should be numeric")
+            - 1;
+        let dest = tokens[5].parse::<usize>().expect("dest should be numeric") - 1;
+
+        let mut buffer: Vec<char> = Vec::new();
+        for _ in 0..qnt {
+            if state[source].len() > 0 {
+                let c = state[source].pop().expect("something is here");
+                buffer.push(c);
+            }
+        }
+        for _ in 0..buffer.len() {
+            let c = buffer.pop().expect("this should exist");
+            state[dest].push(c);
+        }
+    }
+}
+
 fn main() {
     let file_contents = get_input_contents();
 
@@ -63,10 +91,21 @@ fn main() {
         .to_string();
 
     let mut state = parse_initial_state(&initial_state_string);
+    let mut second_state = state.clone();
 
-    parse_moves(&mut state, &file_contents);
+    parse_moves_as_9000(&mut state, &file_contents);
+    parse_moves_as_9001(&mut second_state, &file_contents);
 
+    print!("Top of each stack with the CrateMover 9000: ");
     for stack in state {
+        if stack.len() > 0 {
+            print!("{}", stack.last().expect("something should be there"));
+        }
+    }
+    println!();
+
+    print!("Top of each stack with the CrateMover 9001: ");
+    for stack in second_state {
         if stack.len() > 0 {
             print!("{}", stack.last().expect("something should be there"));
         }
