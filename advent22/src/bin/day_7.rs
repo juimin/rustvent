@@ -1,8 +1,5 @@
 use advent22::get_input_contents;
-use petgraph::{
-    graph::{Graph, NodeIndex},
-    visit::IntoNeighbors,
-};
+use petgraph::graph::{Graph, NodeIndex};
 
 fn build_fs_graph(contents: &String) -> Graph<&str, i32> {
     let mut graph = Graph::<&str, i32>::new();
@@ -50,6 +47,15 @@ fn build_fs_graph(contents: &String) -> Graph<&str, i32> {
     return graph;
 }
 
+fn find_root(g: &Graph<&str, i32>) -> Option<NodeIndex> {
+    for n in g.node_indices() {
+        if *g.node_weight(n).expect("") == "/" {
+            return Some(n);
+        }
+    }
+    return None;
+}
+
 fn calculate_size(graph: &Graph<&str, i32>, current_node: NodeIndex) -> i32 {
     let mut total = 0;
 
@@ -76,18 +82,42 @@ fn calculate_answer_1(graph: &Graph<&str, i32>, limit: i32) -> i32 {
     let mut total = 0;
 
     for node in graph.node_indices() {
-        let node_label = graph.node_weight(node).expect("node exists");
         let neighbors: Vec<NodeIndex> = graph.neighbors(node).collect();
         if neighbors.len() > 0 {
             let size = calculate_size(graph, node);
             if size <= limit {
                 total += size;
             }
-            println!("Size of dir {}: {}", node_label, size);
         }
     }
 
     return total;
+}
+
+fn calculate_answer_2(
+    graph: &Graph<&str, i32>,
+    total_disk_space: i32,
+    required_disk_space: i32,
+) -> i32 {
+    let root_node = find_root(graph).expect("root should exist");
+    let total_used_space = calculate_size(graph, root_node);
+    println!("Used space: {}/{}", total_used_space, total_disk_space);
+    let unused_space = total_disk_space - total_used_space;
+
+    let mut smallest_deleted_size = total_used_space;
+    for node in graph.node_indices() {
+        let neighbors: Vec<NodeIndex> = graph.neighbors(node).collect();
+        if neighbors.len() > 0 {
+            let size = calculate_size(graph, node);
+            if (size + unused_space) >= required_disk_space {
+                if size < smallest_deleted_size {
+                    smallest_deleted_size = size;
+                }
+            }
+        }
+    }
+
+    return smallest_deleted_size;
 }
 
 fn main() {
@@ -95,7 +125,11 @@ fn main() {
 
     let graph = build_fs_graph(&file_contents);
     let answer_1 = calculate_answer_1(&graph, 100000);
+    let answer_2 = calculate_answer_2(&graph, 70000000, 30000000);
 
     println!("Sum of total sizes of dirs: {}", answer_1);
-    // let limit = 100000;
+    println!(
+        "Total size of smallest dir to reach required space: {}",
+        answer_2
+    );
 }
