@@ -1,6 +1,5 @@
 use advent22::get_input_contents;
 
-
 fn init_visibility_map(trees: &Vec<Vec<i32>>) -> Vec<Vec<bool>> {
     let mut mask = Vec::new();
 
@@ -32,7 +31,7 @@ fn find_visible_trees(trees: &Vec<Vec<i32>>, mut v_map: Vec<Vec<bool>>) -> Vec<V
         let mut lowest_height = -1;
         let r = trees.len() - 1 - row;
         for col in 0..trees[row].len() {
-            let c = trees[row].len() -1 - col;
+            let c = trees[row].len() - 1 - col;
             if trees[r][c] > lowest_height {
                 v_map[r][c] = true;
                 lowest_height = trees[r][c];
@@ -66,7 +65,6 @@ fn find_visible_trees(trees: &Vec<Vec<i32>>, mut v_map: Vec<Vec<bool>>) -> Vec<V
 
     v_map
 }
-
 
 fn scenic_helper(trees: &Vec<Vec<i32>>, row: usize, col: usize) -> i32 {
     let mut total = 1;
@@ -116,7 +114,6 @@ fn scenic_helper(trees: &Vec<Vec<i32>>, row: usize, col: usize) -> i32 {
     }
     total *= score;
 
-
     return total;
 }
 
@@ -135,7 +132,6 @@ fn calc_scenic_score(trees: &Vec<Vec<i32>>) -> i32 {
     return best_scenic_score;
 }
 
-
 fn main() {
     let file_contents = get_input_contents();
 
@@ -147,7 +143,6 @@ fn main() {
             v.push(String::from(c).parse::<i32>().expect("Should be int"));
         }
         trees.push(v);
-
     }
 
     let mut v_map = init_visibility_map(&trees);
@@ -167,6 +162,4 @@ fn main() {
     let best_scenic_score = calc_scenic_score(&trees);
 
     println!("best scenic score: {}", best_scenic_score);
-
-
 }
